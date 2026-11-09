@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Biru</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .kalkulator {
+            width: 400px;
+            padding: 15px;
+            border: 3px solid #111;
+            border-radius: 20px;
+            background: white;
+        }
+
+        #layar {
+            width: 100%;
+            height: 90px;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border: 3px solid #123b70;
+            border-radius: 15px;
+            background: white;
+            color: #123b70;
+            font-size: 48px;
+            text-align: right;
+        }
+
+        .tombol {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        button {
+            height: 90px;
+            border: none;
+            border-radius: 16px;
+            background: #d6e7fa;
+            color: #111;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            filter: brightness(0.92);
+        }
+
+        .clear {
+            background: #1976d2;
+            color: white;
+        }
+
+        .backspace {
+            background: #42a5f5;
+            color: white;
+        }
+
+        .operator {
+            background: #416b9d;
+            color: white;
+        }
+
+        .nol {
+            grid-column: span 2;
+        }
+
+        .hasil {
+            background: #0d47a1;
+            color: white;
+        }
+
+        @media (max-width: 650px) {
+            .kalkulator {
+                width: 95%;
+                padding: 18px;
+            }
+
+            #layar {
+                height: 85px;
+                font-size: 36px;
+            }
+
+            .tombol {
+                gap: 9px;
+            }
+
+            button {
+                height: 70px;
+                font-size: 27px;
+                border-radius: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="kalkulator">
+
+        <input type="text" id="layar" value="0" readonly>
+
+        <div class="tombol">
+            <button class="clear" onclick="bersihkan()">C</button>
+            <button class="backspace" onclick="hapus()">⌫</button>
+            <button class="operator" onclick="persen()">%</button>
+            <button class="operator" onclick="pilih('/')">÷</button>
+
+            <button onclick="angka('7')">7</button>
+            <button onclick="angka('8')">8</button>
+            <button onclick="angka('9')">9</button>
+            <button class="operator" onclick="pilih('*')">×</button>
+
+            <button onclick="angka('4')">4</button>
+            <button onclick="angka('5')">5</button>
+            <button onclick="angka('6')">6</button>
+            <button class="operator" onclick="pilih('-')">−</button>
+
+            <button onclick="angka('1')">1</button>
+            <button onclick="angka('2')">2</button>
+            <button onclick="angka('3')">3</button>
+            <button class="operator" onclick="pilih('+')">+</button>
+
+            <button class="nol" onclick="angka('0')">0</button>
+            <button onclick="angka('.')">.</button>
+            <button class="hasil" onclick="hitung()">=</button>
+        </div>
+
+    </div>
+
+    <script>
+        const layar = document.getElementById("layar");
+        let pertama = null;
+        let operasi = null;
+        let inputBaru = true;
+
+        function angka(nilai) {
+            if (inputBaru || layar.value === "Error") {
+                layar.value = nilai === "." ? "0." : nilai;
+                inputBaru = false;
+            } else {
+                if (nilai === "." && layar.value.includes(".")) return;
+                layar.value += nilai;
+            }
+        }
+
+        function pilih(op) {
+            pertama = Number(layar.value);
+            operasi = op;
+            inputBaru = true;
+        }
+
+        function hitung() {
+            if (operasi === null || pertama === null) return;
+
+            let kedua = Number(layar.value);
+            let hasil;
+
+            if (operasi === "+") hasil = pertama + kedua;
+            else if (operasi === "-") hasil = pertama - kedua;
+            else if (operasi === "*") hasil = pertama * kedua;
+            else if (operasi === "/") {
+                if (kedua === 0) {
+                    layar.value = "Error";
+                    operasi = null;
+                    pertama = null;
+                    inputBaru = true;
+                    return;
+                }
+                hasil = pertama / kedua;
+            }
+
+            layar.value = String(Number(hasil.toPrecision(10)));
+            pertama = null;
+            operasi = null;
+            inputBaru = true;
+        }
+
+        function bersihkan() {
+            layar.value = "0";
+            pertama = null;
+            operasi = null;
+            inputBaru = true;
+        }
+
+        function hapus() {
+            if (inputBaru) return;
+
+            layar.value = layar.value.length > 1
+                ? layar.value.slice(0, -1)
+                : "0";
+        }
+
+        function persen() {
+            if (layar.value === "Error") return;
+            layar.value = String(Number(layar.value) / 100);
+            inputBaru = true;
+        }
+    </script>
+
+</body>
+</html>
